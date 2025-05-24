@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
+  },
+  balance: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true // Adds createdAt and updatedAt / Agrega createdAt y updatedAt
