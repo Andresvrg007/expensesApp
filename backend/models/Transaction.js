@@ -9,30 +9,26 @@ const transactionSchema = new mongoose.Schema({
     ref: 'User',           // Reference to User / Referencia al usuario
     required: true
   },
+  amount: {                // Cambiado de "monto" a "amount"
+    type: Number,
+    required: true
+  },
+  category: {              // Cambiado de "categoria" a "category"
+    type: String,
+    required: true
+  },
+  description: {            // Cambiado de "descripcion" a "description"
+    type: String,
+    trim: true
+  },
   tipo: {
     type: String,
     enum: ['ingreso', 'gasto'], // Only "ingreso" or "gasto" / Solo puede ser ingreso o gasto
     required: true
   },
-  categoria: {
-    type: String,
-    required: true
-  },
-  monto: {
-    type: Number,
-    required: true
-  },
-  moneda: {
-    type: String,
-    default: 'DO'
-  },
   fecha: {
     type: Date,
-    required: true
-  },
-  descripcion: {
-    type: String,
-    trim: true
+    default: Date.now        // Cambiado para que la fecha por defecto sea la fecha actual
   },
   etiquetas: [{
     type: String,

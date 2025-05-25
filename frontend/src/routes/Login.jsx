@@ -2,17 +2,15 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { API_ENDPOINTS } from '../config/api';
 import { useAuth } from '../context/AuthContext';
+import { Alert } from '../components/Alert';
 
-export const Login=()=>{
-    const [email,setEmail]=useState("")
+export const Login=()=>{    const [email,setEmail]=useState("")
     const [password,setPassword]=useState("")
-    const [error, setError] = useState("")
+    const [alert, setAlert] = useState(null)
     const navigate=useNavigate();
-    const { verifyAuth } = useAuth();
-
-    const handleSubmit= async(e)=>{
+    const { verifyAuth } = useAuth();    const handleSubmit= async(e)=>{
         e.preventDefault()
-        setError("") // Limpiar error al intentar login nuevamente
+        setAlert(null) // Limpiar alert al intentar login nuevamente
         try {
             const response=await fetch(API_ENDPOINTS.LOGIN,{
                 method:'POST',
@@ -23,47 +21,53 @@ export const Login=()=>{
                 }
             });
             
+            // Verificar si la respuesta es JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Login response is not JSON:', response.status, response.statusText);
+                throw new Error('Server error: Invalid response format');
+            }
+            
             const data = await response.json();
             
-            
             if(!response.ok){
-                throw new Error(data.message || 'Error al iniciar sesión')
+                throw new Error(data.message || 'Login failed. Please check your credentials.')
             } 
             
             // Verificar si la cookie se estableció
             const cookies = document.cookie;
-            
             
             // Verificar autenticación después del login exitoso
             await verifyAuth();
             
             setEmail("");
             setPassword("")
-            navigate("/dashboard")
-        } catch (error) {
-            setError(error.message)
+            navigate("/dashboard")        } catch (error) {
+            setAlert({
+                type: 'error',
+                message: error.message
+            });
             console.log(error)
         }
     }
 
     return (
         <>
+            {alert && (
+                <Alert
+                    type={alert.type}
+                    message={alert.message}
+                    onClose={() => setAlert(null)}
+                />
+            )}
+            
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 
                 <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
                     Sign in to your account
                 </h2>
-                </div>
-
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    {error && (
-                        <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200">
-                            <p className="text-sm text-red-600 font-medium">
-                                {error}
-                            </p>
-                        </div>
-                    )}
+                </div>                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-6"  onSubmit={handleSubmit}>
                     <div>
                     <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">

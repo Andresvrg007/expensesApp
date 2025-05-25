@@ -32,11 +32,14 @@ const userSchema = new mongoose.Schema({
     fechaActualizacion: {
       type: Date,
       default: Date.now
-    }
-  },
+    }  },
   balance: {
     type: Number,
     default: 0
+  },
+  lastMonthlyReset: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true // Adds createdAt and updatedAt / Agrega createdAt y updatedAt

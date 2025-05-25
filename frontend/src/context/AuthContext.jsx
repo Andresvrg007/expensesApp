@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 
 const AuthContext = createContext();
 
@@ -7,13 +8,19 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
-
-    const verifyAuth = async () => {
+    const navigate = useNavigate();    const verifyAuth = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/verify', {
+            const response = await fetch(API_ENDPOINTS.VERIFY, {
                 credentials: 'include'
             });
+            
+            // Verificar si la respuesta es JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Response is not JSON:', response.status, response.statusText);
+                throw new Error('Server returned non-JSON response');
+            }
+            
             const data = await response.json();
             
             if (data.isAuthenticated) {
@@ -39,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             // Llamar al backend para limpiar la cookie
-            await fetch('http://localhost:5000/api/logout', {
+            await fetch(API_ENDPOINTS.LOGOUT, {
                 method: 'POST',
                 credentials: 'include'
             });
