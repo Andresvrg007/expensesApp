@@ -5,7 +5,7 @@ import { Register } from "./routes/Register";
 import { Dashboard } from "./routes/Dashboard";
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, PublicRoute } from './components/ProtectedRoute';
-import {Forgotpassword} from  './routes/Forgotpassword'
+import {Forgotpassword} from  './routes/ForgotPassword'
 
 function App() {
   return (
